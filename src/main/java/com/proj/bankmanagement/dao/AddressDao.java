@@ -42,4 +42,15 @@ public class AddressDao {
 			return null;
 		}
 	}
+	
+	public Address updateAddress(int id,Address address ) {
+		Address exAddress = findAddressById(id);
+		
+		if (exAddress!=null) {
+			address.setAddressId(id);
+			return repo.save(address);
+		}else {
+			return null;
+		}
+	}
 }

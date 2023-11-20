@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.Transaction;
 import com.proj.bankmanagement.repo.TransactionRepo;
 
@@ -39,6 +40,17 @@ public class TransactionDao {
 			repo.delete(exTransaction);
 			return exTransaction;
 		} else {
+			return null;
+		}
+	}
+	
+	public Transaction updateTransaction(int id,Transaction transaction ) {
+		Transaction exTransaction = findTransactionById(id);
+		
+		if (exTransaction!=null) {
+			transaction.setTransactionId(id);
+			return repo.save(transaction);
+		}else {
 			return null;
 		}
 	}

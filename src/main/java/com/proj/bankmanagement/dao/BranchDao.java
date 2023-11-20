@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.repo.BranchRepo;
 
@@ -39,6 +40,17 @@ public class BranchDao {
 			repo.delete(exBranch);
 			return exBranch;
 		} else {
+			return null;
+		}
+	}
+	
+	public Branch updateBranch(int id,Branch branch ) {
+		Branch exBranch = findBranchById(id);
+		
+		if (exBranch!=null) {
+			branch.setBranchId(id);
+			return repo.save(branch);
+		}else {
 			return null;
 		}
 	}

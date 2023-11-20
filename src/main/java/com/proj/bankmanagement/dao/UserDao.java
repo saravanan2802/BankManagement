@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.User;
 import com.proj.bankmanagement.repo.UserRepo;
 
@@ -39,6 +40,17 @@ public class UserDao {
 			repo.delete(exUser);
 			return exUser;
 		} else {
+			return null;
+		}
+	}
+	
+	public User updateUser(int id,User user ) {
+		User exUser = findUserById(id);
+		
+		if (exUser!=null) {
+			user.setUserId(id);
+			return repo.save(user);
+		}else {
 			return null;
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.repo.ManagerRepo;
 
@@ -40,6 +41,17 @@ public class ManagerDao {
 			repo.delete(exManager);
 			return exManager;
 		} else {
+			return null;
+		}
+	}
+	
+	public Manager updateManager(int id,Manager manager ) {
+		Manager exManager = findManagerById(id);
+		
+		if (exManager!=null) {
+			manager.setManagerId(id);
+			return repo.save(manager);
+		}else {
 			return null;
 		}
 	}

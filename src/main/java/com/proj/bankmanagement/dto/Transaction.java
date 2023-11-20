@@ -1,6 +1,7 @@
 package com.proj.bankmanagement.dto;
 
-import java.time.LocalDateTime;
+
+import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
@@ -8,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 @Component
 @Entity
 public class Transaction {
@@ -16,7 +18,7 @@ public class Transaction {
 	private int transactionId;
 	private double transactionAmount;
 	private long transactionToAccount;
-	private LocalDateTime transactionDateAndtime;
+	private Date transactionDateAndtime;
 	private TransactionType transType;
 	private TransactionStatus transStatus;
 
@@ -44,11 +46,11 @@ public class Transaction {
 		this.transactionToAccount = transactionToAccount;
 	}
 
-	public LocalDateTime getTransactionDateAndtime() {
+	public Date getTransactionDateAndtime() {
 		return transactionDateAndtime;
 	}
 
-	public void setTransactionDateAndtime(LocalDateTime transactionDateAndtime) {
+	public void setTransactionDateAndtime(Date transactionDateAndtime) {
 		this.transactionDateAndtime = transactionDateAndtime;
 	}
 

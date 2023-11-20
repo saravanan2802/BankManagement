@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 @Component
@@ -20,7 +21,7 @@ public class Branch {
 	private String branchIfsc;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address branchAddress;
-	@OneToOne
+	@ManyToOne
 	private Bank branchBank;
 	@OneToOne
 	private Manager branchManager;

@@ -1,5 +1,7 @@
 package com.proj.bankmanagement.dto;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.CascadeType;
@@ -7,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 @Component
@@ -16,8 +19,9 @@ public class Bank {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int bankId;
 	private String bankName;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Address bankAddress;
+	private long bankContact;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Branch> bankBranches;
 
 	public int getBankId() {
 		return bankId;
@@ -35,12 +39,20 @@ public class Bank {
 		this.bankName = bankName;
 	}
 
-	public Address getBankAddress() {
-		return bankAddress;
+	public long getBankContact() {
+		return bankContact;
 	}
 
-	public void setBankAddress(Address bankAddress) {
-		this.bankAddress = bankAddress;
+	public void setBankContact(long bankContact) {
+		this.bankContact = bankContact;
+	}
+
+	public List<Branch> getBankBranches() {
+		return bankBranches;
+	}
+
+	public void setBankBranches(List<Branch> bankBranches) {
+		this.bankBranches = bankBranches;
 	}
 
 }
