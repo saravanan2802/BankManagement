@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.User;
 import com.proj.bankmanagement.repo.UserRepo;
 
@@ -14,7 +13,7 @@ import com.proj.bankmanagement.repo.UserRepo;
 public class UserDao {
 	@Autowired
 	UserRepo repo;
-	
+
 	public User saveUser(User a) {
 		return repo.save(a);
 	}
@@ -43,14 +42,14 @@ public class UserDao {
 			return null;
 		}
 	}
-	
-	public User updateUser(int id,User user ) {
+
+	public User updateUser(int id, User user) {
 		User exUser = findUserById(id);
-		
-		if (exUser!=null) {
+
+		if (exUser != null) {
 			user.setUserId(id);
 			return repo.save(user);
-		}else {
+		} else {
 			return null;
 		}
 	}

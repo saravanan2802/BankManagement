@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.Bank;
 import com.proj.bankmanagement.repo.BankRepo;
 
@@ -14,7 +13,7 @@ import com.proj.bankmanagement.repo.BankRepo;
 public class BankDao {
 	@Autowired
 	BankRepo repo;
-	
+
 	public Bank saveBank(Bank a) {
 		return repo.save(a);
 	}
@@ -43,14 +42,14 @@ public class BankDao {
 			return null;
 		}
 	}
-	
-	public Bank updateBank(int id,Bank bank ) {
+
+	public Bank updateBank(int id, Bank bank) {
 		Bank exBank = findBankById(id);
-		
-		if (exBank!=null) {
+
+		if (exBank != null) {
 			bank.setBankId(id);
 			return repo.save(bank);
-		}else {
+		} else {
 			return null;
 		}
 	}
