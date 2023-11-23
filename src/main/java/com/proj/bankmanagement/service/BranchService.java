@@ -12,6 +12,7 @@ import com.proj.bankmanagement.dao.BankDao;
 import com.proj.bankmanagement.dao.BranchDao;
 import com.proj.bankmanagement.dto.Bank;
 import com.proj.bankmanagement.dto.Branch;
+import com.proj.bankmanagement.dto.Manager;
 
 @Service
 public class BranchService {
@@ -21,13 +22,21 @@ public class BranchService {
 	@Autowired
 	BankDao bankDao;
 
-	public ResponseEntity<ResponseStructure<Branch>> saveBranch(Branch b) {
-		ResponseStructure<Branch> rs = new ResponseStructure<>();
-		rs.setData(branchDao.saveBranch(b));
-		rs.setMsg("Branch has been saved");
-		rs.setStatus(HttpStatus.CREATED.value());
+	public ResponseEntity<ResponseStructure<Branch>> saveBranch(Branch b, int bankId) {
 
-		return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
+		if (bankDao.findBankById(bankId) != null) {
+			Bank exBank = bankDao.findBankById(bankId);
+			Branch savedBranch = branchDao.saveBranch(b);
+			savedBranch.setBranchBank(exBank);
+			exBank.getBankBranches().add(savedBranch);
+			ResponseStructure<Branch> rs = new ResponseStructure<>();
+			rs.setData(branchDao.saveBranch(savedBranch));
+			rs.setMsg("Branch has been saved");
+			rs.setStatus(HttpStatus.CREATED.value());
+
+			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
+		}
+		return null; // no bank found
 	}
 
 	public ResponseEntity<ResponseStructure<Branch>> findBranchById(int id) {
@@ -46,7 +55,7 @@ public class BranchService {
 	public ResponseEntity<ResponseStructure<List<Branch>>> findAllBranch() {
 		ResponseStructure<List<Branch>> rs = new ResponseStructure<>();
 		rs.setData(branchDao.findAllBranch());
-		rs.setMsg("All Books were Found");
+		rs.setMsg("All Branches were Found");
 		rs.setStatus(HttpStatus.FOUND.value());
 		return new ResponseEntity<ResponseStructure<List<Branch>>>(rs, HttpStatus.FOUND);
 	}
@@ -55,6 +64,14 @@ public class BranchService {
 		ResponseStructure<Branch> rs = new ResponseStructure<>();
 
 		if (branchDao.findBranchById(id) != null) {
+			Branch exBranch = branchDao.findBranchById(id);
+			Bank exBank = exBranch.getBranchBank();
+			Manager exManager = exBranch.getBranchManager();
+			exBranch.setBranchManager(null);
+			exManager.setManagerBranch(null);
+			exBranch.setBranchBank(null);
+			exBank.getBankBranches().remove(exBranch);
+			branchDao.updateBranch(id, exBranch);
 			rs.setData(branchDao.deleteBranch(id));
 			rs.setMsg("Branch with Id " + id + " has been deleted");
 			rs.setStatus(HttpStatus.CREATED.value());
@@ -74,23 +91,23 @@ public class BranchService {
 		}
 		return null; // No Branch Found
 	}
-	
-	public ResponseEntity<ResponseStructure<Branch>> addBankToBranch(int branchId,int bankId){
+
+	public ResponseEntity<ResponseStructure<Branch>> addBankToBranch(int branchId, int bankId) {
 		ResponseStructure<Branch> rs = new ResponseStructure<>();
-		
-		if (bankDao.findBankById(bankId)!=null) {
+
+		if (bankDao.findBankById(bankId) != null) {
 			Bank exBank = bankDao.findBankById(bankId);
-			if (branchDao.findBranchById(branchId)!=null) {
+			if (branchDao.findBranchById(branchId) != null) {
 				Branch exBranch = branchDao.findBranchById(branchId);
 				exBranch.setBranchBank(exBank);
 				rs.setData(branchDao.updateBranch(branchId, exBranch));
 				rs.setMsg("Bank with Id " + bankId + " added to Branch");
 				rs.setStatus(HttpStatus.CREATED.value());
-				return new ResponseEntity<ResponseStructure<Branch>>(rs,HttpStatus.CREATED);
+				return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 			}
 			return null; // no branch found
 		}
-		return null; //no bank found
+		return null; // no bank found
 	}
 
 }

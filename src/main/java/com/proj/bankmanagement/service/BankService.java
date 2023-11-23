@@ -45,7 +45,7 @@ public class BankService {
 	public ResponseEntity<ResponseStructure<List<Bank>>> findAllBank() {
 		ResponseStructure<List<Bank>> rs = new ResponseStructure<>();
 		rs.setData(bankDao.findAllBank());
-		rs.setMsg("All Books were Found");
+		rs.setMsg("All Banks were Found");
 		rs.setStatus(HttpStatus.FOUND.value());
 		return new ResponseEntity<ResponseStructure<List<Bank>>>(rs, HttpStatus.FOUND);
 	}
