@@ -30,6 +30,7 @@ public class Branch {
 	@JsonIgnore
 	private Manager branchManager;
 	@OneToMany(cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<User> branchUsers;
 
 	public int getBranchId() {

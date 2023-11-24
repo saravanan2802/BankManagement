@@ -43,4 +43,8 @@ public class ManagerController {
 	public ResponseEntity<ResponseStructure<Manager>> updateManager(@RequestBody Manager m, @RequestParam int id){
 		return managerService.updateManager(id, m);
 	}
+	@GetMapping("/managerlogin")
+	public ResponseEntity<ResponseStructure<Manager>> managerLogin(@RequestParam String managerName, @RequestParam String managerPassword){
+		return managerService.managerLogin(managerName, managerPassword);
+	}
 }

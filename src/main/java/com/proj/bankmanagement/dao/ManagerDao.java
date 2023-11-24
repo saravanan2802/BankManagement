@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.repo.ManagerRepo;
 
@@ -53,5 +52,17 @@ public class ManagerDao {
 		} else {
 			return null;
 		}
+	}
+
+	public Manager managerLogin(String managerName, String managerPassword) {
+
+		if (repo.findManagerByName(managerName) != null) {
+			if (repo.findManagerByName(managerName).getManagerPassword().equals(managerPassword)) {
+
+				return repo.findManagerByName(managerName);
+			}
+			return null; // password not match
+		}
+		return null;// no manager found
 	}
 }

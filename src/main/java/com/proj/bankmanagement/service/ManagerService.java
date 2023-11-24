@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import com.proj.bankmanagement.config.ResponseStructure;
 import com.proj.bankmanagement.dao.BranchDao;
 import com.proj.bankmanagement.dao.ManagerDao;
-import com.proj.bankmanagement.dto.Bank;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
+import com.proj.bankmanagement.repo.ManagerRepo;
 
 @Service
 public class ManagerService {
@@ -21,6 +21,8 @@ public class ManagerService {
 	ManagerDao managerDao;
 	@Autowired
 	BranchDao branchDao;
+	@Autowired
+	ManagerRepo managerRepo;
 
 	public ResponseEntity<ResponseStructure<Manager>> saveManager(Manager manager, int branchId) {
 		ResponseStructure<Manager> rs = new ResponseStructure<>();
@@ -86,5 +88,20 @@ public class ManagerService {
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.CREATED);
 		}
 		return null; // No Manager Found
+	}
+	
+	public ResponseEntity<ResponseStructure<Manager>> managerLogin(String managerName,String managerPassword){
+		ResponseStructure<Manager> rs = new ResponseStructure<>();
+		
+		if(managerRepo.findManagerByName(managerName)!=null) {
+			if (managerRepo.findManagerByName(managerName).getManagerPassword().equals(managerPassword)) {
+				rs.setData(managerRepo.findManagerByName(managerName));
+				rs.setMsg("Manager Found");
+				rs.setStatus(HttpStatus.FOUND.value());
+				return new ResponseEntity<ResponseStructure<Manager>>(rs,HttpStatus.FOUND);
+			}
+			return null; //password not match
+		}
+		return null;// no manager found
 	}
 }
