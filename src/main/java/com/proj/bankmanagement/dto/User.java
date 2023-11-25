@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 @Component
 @Entity
@@ -17,7 +18,7 @@ public class User {
 	private String userName;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Branch userBranch;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Account userAccount;

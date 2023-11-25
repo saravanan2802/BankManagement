@@ -39,6 +39,8 @@ public class UserService {
 				account.setAccountType(AccountType.SAVING);
 			} else if (accountType == 2) {
 				account.setAccountType(AccountType.CURRENT);
+			} else {
+				return null; // bad request only 1 or 2
 			}
 			u.setUserAccount(account);
 			account.setAccountUser(u);
@@ -55,19 +57,55 @@ public class UserService {
 
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 
+		} else {
+			return null; // no manager found
 		}
-		return null; // no manager found
+
 	}
-	
-	public ResponseEntity<ResponseStructure<User>> findUserById(int id){
+
+	public ResponseEntity<ResponseStructure<User>> findUserById(int id) {
 		ResponseStructure<User> rs = new ResponseStructure<>();
-		
-		if (userDao.findUserById(id)!=null) {
+
+		if (userDao.findUserById(id) != null) {
 			rs.setData(userDao.findUserById(id));
 			rs.setMsg("User with Id " + id + " found");
 			rs.setStatus(HttpStatus.FOUND.value());
-			return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.FOUND);
+			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.FOUND);
 		}
-		return null; //no user found
+		return null; // no user found
+	}
+
+	public ResponseEntity<ResponseStructure<User>> deleteUserById(int id) {
+		ResponseStructure<User> rs = new ResponseStructure<>();
+
+		User u = userDao.findUserById(id);
+		Branch b = u.getUserBranch();
+
+		if (u != null) {
+			u.setUserBranch(null);
+			b.getBranchUsers().remove(u);
+			branchDao.updateBranch(b.getBranchId(), b);
+			rs.setData(userDao.deleteUser(id));
+			rs.setMsg("User with Id " + id + " deleted");
+			rs.setStatus(HttpStatus.CREATED.value());
+			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
+
+		}
+		return null; // no user found
+
+	}
+
+	public ResponseEntity<ResponseStructure<User>> updateUser(User u, int id) {
+		ResponseStructure<User> rs = new ResponseStructure<>();
+
+		User exUser = userDao.findUserById(id);
+
+		if (exUser != null) {
+			rs.setData(userDao.updateUser(id, u));
+			rs.setMsg("User with Id " + id + "updated");
+			rs.setStatus(HttpStatus.CREATED.value());
+			return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.CREATED);
+		}
+		return null; // no user found
 	}
 }

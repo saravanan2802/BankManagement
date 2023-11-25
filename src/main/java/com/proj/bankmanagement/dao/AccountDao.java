@@ -70,4 +70,8 @@ public class AccountDao {
 		}
 		return null; //no account found
 	}
+	
+	public Account findAccountByAccountNumber(long accountNumber) {
+		return repo.findAccountByAccountNumber(accountNumber);
+	}
 }

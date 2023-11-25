@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.proj.bankmanagement.config.ResponseStructure;
 import com.proj.bankmanagement.dao.BranchDao;
 import com.proj.bankmanagement.dao.ManagerDao;
+import com.proj.bankmanagement.dao.UserDao;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
+import com.proj.bankmanagement.dto.User;
 import com.proj.bankmanagement.repo.ManagerRepo;
 
 @Service
@@ -23,6 +25,8 @@ public class ManagerService {
 	BranchDao branchDao;
 	@Autowired
 	ManagerRepo managerRepo;
+	@Autowired
+	UserDao userDao;
 
 	public ResponseEntity<ResponseStructure<Manager>> saveManager(Manager manager, int branchId) {
 		ResponseStructure<Manager> rs = new ResponseStructure<>();
@@ -60,16 +64,16 @@ public class ManagerService {
 
 	public ResponseEntity<ResponseStructure<Manager>> findManagerById(int id) {
 		ResponseStructure<Manager> rs = new ResponseStructure<>();
-		
-		if(managerDao.findManagerById(id)!=null) {
+
+		if (managerDao.findManagerById(id) != null) {
 			rs.setData(managerDao.findManagerById(id));
 			rs.setMsg("Manager with Id " + id + " found");
 			rs.setStatus(HttpStatus.FOUND.value());
-			return new ResponseEntity<ResponseStructure<Manager>>(rs,HttpStatus.FOUND);
+			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.FOUND);
 		}
-		return null; //no manager found
+		return null; // no manager found
 	}
-	
+
 	public ResponseEntity<ResponseStructure<List<Manager>>> findAllManager() {
 		ResponseStructure<List<Manager>> rs = new ResponseStructure<>();
 		rs.setData(managerDao.findAllManager());
@@ -77,7 +81,7 @@ public class ManagerService {
 		rs.setStatus(HttpStatus.FOUND.value());
 		return new ResponseEntity<ResponseStructure<List<Manager>>>(rs, HttpStatus.FOUND);
 	}
-	
+
 	public ResponseEntity<ResponseStructure<Manager>> updateManager(int id, Manager b) {
 		ResponseStructure<Manager> rs = new ResponseStructure<>();
 
@@ -89,19 +93,51 @@ public class ManagerService {
 		}
 		return null; // No Manager Found
 	}
-	
-	public ResponseEntity<ResponseStructure<Manager>> managerLogin(String managerName,String managerPassword){
+
+	public ResponseEntity<ResponseStructure<Manager>> managerLogin(String managerName, String managerPassword) {
 		ResponseStructure<Manager> rs = new ResponseStructure<>();
-		
-		if(managerRepo.findManagerByName(managerName)!=null) {
+
+		if (managerRepo.findManagerByName(managerName) != null) {
 			if (managerRepo.findManagerByName(managerName).getManagerPassword().equals(managerPassword)) {
 				rs.setData(managerRepo.findManagerByName(managerName));
 				rs.setMsg("Manager Found");
 				rs.setStatus(HttpStatus.FOUND.value());
-				return new ResponseEntity<ResponseStructure<Manager>>(rs,HttpStatus.FOUND);
+				return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.FOUND);
 			}
-			return null; //password not match
+			return null; // password not match
 		}
 		return null;// no manager found
+	}
+
+	public ResponseEntity<ResponseStructure<User>> changeAccountBranch(String managerName, String managerPassword,
+			int userId, int newBranchId) {
+		ResponseStructure<User> rs = new ResponseStructure<>();
+
+		Manager m = managerDao.managerLogin(managerName, managerPassword);
+		User exUser = userDao.findUserById(userId);
+		Branch newBranch = branchDao.findBranchById(newBranchId);
+
+		if (m != null) {
+			if (exUser != null) {
+				if (newBranch != null) {
+					if (exUser.getUserBranch().getBranchId() != newBranchId) {
+						Branch exBranch = exUser.getUserBranch();
+						exBranch.getBranchUsers().remove(exUser);
+						branchDao.updateBranch(exBranch.getBranchId(), exBranch);
+						exUser.setUserBranch(newBranch);
+						newBranch.getBranchUsers().add(exUser);
+						branchDao.updateBranch(newBranchId, newBranch);
+						rs.setData(exUser);
+						rs.setMsg("Account moved to new Branch");
+						rs.setStatus(HttpStatus.CREATED.value());
+						return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.CREATED);
+					}
+					return null; // user already present in same branch
+				}
+				return null; // no new branch found
+			}
+			return null; // no user found
+		}
+		return null; // no manager founds
 	}
 }

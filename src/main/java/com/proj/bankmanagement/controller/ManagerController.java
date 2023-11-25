@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proj.bankmanagement.config.ResponseStructure;
 import com.proj.bankmanagement.dto.Manager;
+import com.proj.bankmanagement.dto.User;
 import com.proj.bankmanagement.service.ManagerService;
 
 @RestController
@@ -22,29 +23,41 @@ import com.proj.bankmanagement.service.ManagerService;
 public class ManagerController {
 	@Autowired
 	ManagerService managerService;
-	
+
 	@PostMapping
-	public ResponseEntity<ResponseStructure<Manager>> saveManager(@RequestBody Manager m,@RequestParam int branchId){
+	public ResponseEntity<ResponseStructure<Manager>> saveManager(@RequestBody Manager m, @RequestParam int branchId) {
 		return managerService.saveManager(m, branchId);
 	}
+
 	@DeleteMapping
-	public ResponseEntity<ResponseStructure<Manager>> deleteManager(@RequestParam int id){
+	public ResponseEntity<ResponseStructure<Manager>> deleteManager(@RequestParam int id) {
 		return managerService.deleteManager(id);
 	}
+
 	@GetMapping
-	public ResponseEntity<ResponseStructure<Manager>> findManagerById(@RequestParam int id){
+	public ResponseEntity<ResponseStructure<Manager>> findManagerById(@RequestParam int id) {
 		return managerService.findManagerById(id);
 	}
+
 	@GetMapping("/all")
-	public ResponseEntity<ResponseStructure<List<Manager>>> findAllManager(){
+	public ResponseEntity<ResponseStructure<List<Manager>>> findAllManager() {
 		return managerService.findAllManager();
 	}
+
 	@PutMapping
-	public ResponseEntity<ResponseStructure<Manager>> updateManager(@RequestBody Manager m, @RequestParam int id){
+	public ResponseEntity<ResponseStructure<Manager>> updateManager(@RequestBody Manager m, @RequestParam int id) {
 		return managerService.updateManager(id, m);
 	}
+
 	@GetMapping("/managerlogin")
-	public ResponseEntity<ResponseStructure<Manager>> managerLogin(@RequestParam String managerName, @RequestParam String managerPassword){
+	public ResponseEntity<ResponseStructure<Manager>> managerLogin(@RequestParam String managerName,
+			@RequestParam String managerPassword) {
 		return managerService.managerLogin(managerName, managerPassword);
+	}
+
+	@PutMapping("/newbranch")
+	public ResponseEntity<ResponseStructure<User>> changeAccountToNewBranch(@RequestParam String managerName,
+			@RequestParam String managerPassword, @RequestParam int userId, @RequestParam int newBranchId) {
+		return managerService.changeAccountBranch(managerName, managerPassword, userId, newBranchId);
 	}
 }
