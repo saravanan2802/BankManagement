@@ -53,4 +53,8 @@ public class UserDao {
 			return null;
 		}
 	}
+	
+	public User findUserByName(String userName) {
+		return repo.findUserByName(userName);
+	}
 }

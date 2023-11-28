@@ -108,4 +108,23 @@ public class UserService {
 		}
 		return null; // no user found
 	}
+	
+	public ResponseEntity<ResponseStructure<User>> findUserByName(String userName,String userPassword){
+		ResponseStructure<User> rs = new ResponseStructure<>();
+		
+		User exUser = userDao.findUserByName(userName);
+		
+		if (exUser!=null) {
+			if (exUser.getUserAccount().getAccountPassword().equals(userPassword)) {
+				rs.setData(exUser);
+				rs.setMsg("User Found");
+				rs.setStatus(HttpStatus.FOUND.value());
+				return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.FOUND);
+				
+			}
+			return null; //password not match
+		}
+		return null; //no user found
+	}
+
 }

@@ -1,6 +1,8 @@
 package com.proj.bankmanagement.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.proj.bankmanagement.config.ResponseStructure;
 import com.proj.bankmanagement.dao.AccountDao;
 import com.proj.bankmanagement.dao.TransactionDao;
+import com.proj.bankmanagement.dao.UserDao;
 import com.proj.bankmanagement.dto.Account;
 import com.proj.bankmanagement.dto.Transaction;
 import com.proj.bankmanagement.dto.TransactionStatus;
@@ -21,6 +24,8 @@ public class TransactionService {
 	TransactionDao transactionDao;
 	@Autowired
 	AccountDao accountDao;
+	@Autowired
+	UserDao userDao;
 
 	public ResponseEntity<ResponseStructure<Transaction>> sendMoney(long fromAccountNumber, String accountPassword,
 			double amount, long toAccountNumber) {
@@ -74,9 +79,9 @@ public class TransactionService {
 							fromAccount.getAccountTransactions().add(savedunsuccesstransaction);
 							accountDao.updateAccount(fromAccount, fromAccount.getAccountId());
 							rs.setData(t);
-							rs.setMsg("Transction pending");
+							rs.setMsg("Transction pending. Wait for 24hrs...Status will be displayed Shortly");
 							rs.setStatus(HttpStatus.ALREADY_REPORTED.value());
-							return new ResponseEntity<ResponseStructure<Transaction>>(rs,HttpStatus.ALREADY_REPORTED);
+							return new ResponseEntity<ResponseStructure<Transaction>>(rs, HttpStatus.ALREADY_REPORTED);
 						}
 						return null; // password mismatch
 					}
@@ -87,6 +92,60 @@ public class TransactionService {
 			return null; // transaction amount should be greater than zero
 		}
 		return null; // cannot send money to same account
+
+	}
+
+	public ResponseEntity<ResponseStructure<List<Transaction>>> updatePendingTransaction() {
+		ResponseStructure<List<Transaction>> rs = new ResponseStructure<>();
+		LocalDate currentDate = LocalDate.now();
+		List<Transaction> transactions = transactionDao.findAllTransaction();
+
+		if (transactions != null) {
+			for (Transaction trans : transactions) {
+				if (trans.getTransStatus().equals(TransactionStatus.PENDING)) {
+					if (currentDate.equals(trans.getTransactionDateAndtime().plusDays(1))) {
+						trans.setTransStatus(TransactionStatus.FAILED);
+						trans.setTransType(TransactionType.NOTDEBITED);
+						transactionDao.updateTransaction(trans.getTransactionId(), trans);
+
+					}
+				}
+			}
+			List<Transaction> updatedtransactions = transactionDao.findAllTransaction();
+			rs.setData(updatedtransactions);
+			rs.setMsg("Transaction Updated");
+			rs.setStatus(HttpStatus.ACCEPTED.value());
+			return new ResponseEntity<ResponseStructure<List<Transaction>>>(rs, HttpStatus.ACCEPTED);
+		}
+		return null; // no pending transaction
+	}
+
+	public ResponseEntity<ResponseStructure<List<Transaction>>> getFilteredTransactions(String userName,
+			String accountPassword, int month) {
+
+		ResponseStructure<List<Transaction>> rs = new ResponseStructure<>();
+		List<Transaction> filteredList = new ArrayList<>();
+
+		if (userDao.findUserByName(userName) != null) {
+			if (userDao.findUserByName(userName).getUserAccount().getAccountPassword().equals(accountPassword)) {
+				List<Transaction> userTransactions = userDao.findUserByName(userName).getUserAccount()
+						.getAccountTransactions();
+				LocalDate currentDate = LocalDate.now();
+				LocalDate preDate = LocalDate.now().minusMonths(month);
+				for (Transaction transaction : userTransactions) {
+					if (transaction.getTransactionDateAndtime().isAfter(preDate)
+							&& transaction.getTransactionDateAndtime().isBefore(currentDate)) {
+						filteredList.add(transaction);
+					}
+				}
+				rs.setData(filteredList);
+				rs.setMsg("Transactions Found within Given Months");
+				rs.setStatus(HttpStatus.FOUND.value());
+				return new ResponseEntity<ResponseStructure<List<Transaction>>>(rs,HttpStatus.FOUND);
+			}
+			return null; // password mismatch
+		}
+		return null; // no user found
 
 	}
 

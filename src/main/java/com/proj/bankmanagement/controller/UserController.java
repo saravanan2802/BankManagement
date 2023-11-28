@@ -43,4 +43,10 @@ public class UserController {
 		return userService.updateUser(u, id);
 	}
 	
+	@GetMapping("/login")
+	public ResponseEntity<ResponseStructure<User>> userLogin(@RequestParam String userName, @RequestParam String userPassword){
+		return userService.findUserByName(userName, userPassword);
+	}
+	
+	
 }

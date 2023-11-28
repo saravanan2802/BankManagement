@@ -1,6 +1,5 @@
 package com.proj.bankmanagement.dto;
 
-
 import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
@@ -19,6 +18,9 @@ public class Transaction {
 	private double transactionAmount;
 	private long transactionToAccount;
 	private LocalDate transactionDateAndtime;
+	private TransactionType transType;
+	private TransactionStatus transStatus;
+
 	public LocalDate getTransactionDateAndtime() {
 		return transactionDateAndtime;
 	}
@@ -26,9 +28,6 @@ public class Transaction {
 	public void setTransactionDateAndtime(LocalDate transactionDateAndtime) {
 		this.transactionDateAndtime = transactionDateAndtime;
 	}
-
-	private TransactionType transType;
-	private TransactionStatus transStatus;
 
 	public int getTransactionId() {
 		return transactionId;
@@ -53,8 +52,6 @@ public class Transaction {
 	public void setTransactionToAccount(long transactionToAccount) {
 		this.transactionToAccount = transactionToAccount;
 	}
-
-	
 
 	public TransactionType getTransType() {
 		return transType;
