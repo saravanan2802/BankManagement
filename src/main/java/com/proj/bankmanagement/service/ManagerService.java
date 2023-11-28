@@ -14,6 +14,11 @@ import com.proj.bankmanagement.dao.UserDao;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.dto.User;
+import com.proj.bankmanagement.exception.BranchNotFound;
+import com.proj.bankmanagement.exception.ManagerNotFound;
+import com.proj.bankmanagement.exception.PasswordIncorrect;
+import com.proj.bankmanagement.exception.UserInSameBranch;
+import com.proj.bankmanagement.exception.UserNotFound;
 import com.proj.bankmanagement.repo.ManagerRepo;
 
 @Service
@@ -41,7 +46,7 @@ public class ManagerService {
 
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no branch found
+		throw new BranchNotFound("No Branch Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Manager>> deleteManager(int managerId) {
@@ -59,7 +64,7 @@ public class ManagerService {
 
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no manager found
+		throw new ManagerNotFound("No Manager Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Manager>> findManagerById(int id) {
@@ -71,7 +76,7 @@ public class ManagerService {
 			rs.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.FOUND);
 		}
-		return null; // no manager found
+		throw new ManagerNotFound("No Manager Found");
 	}
 
 	public ResponseEntity<ResponseStructure<List<Manager>>> findAllManager() {
@@ -91,7 +96,7 @@ public class ManagerService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.CREATED);
 		}
-		return null; // No Manager Found
+		throw new ManagerNotFound("No Manager Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Manager>> managerLogin(String managerName, String managerPassword) {
@@ -104,9 +109,9 @@ public class ManagerService {
 				rs.setStatus(HttpStatus.FOUND.value());
 				return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.FOUND);
 			}
-			return null; // password not match
+			throw new PasswordIncorrect("Password Mismatch");
 		}
-		return null;// no manager found
+		throw new ManagerNotFound("No Manager Found");
 	}
 
 	public ResponseEntity<ResponseStructure<User>> changeAccountBranch(String managerName, String managerPassword,
@@ -132,12 +137,12 @@ public class ManagerService {
 						rs.setStatus(HttpStatus.CREATED.value());
 						return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.CREATED);
 					}
-					return null; // user already present in same branch
+					throw new UserInSameBranch("Cannot Change Account Branch To Same branch");
 				}
-				return null; // no new branch found
+				throw new BranchNotFound("No branch Found");
 			}
-			return null; // no user found
+			throw new UserNotFound("No User Found");
 		}
-		return null; // no manager founds
+		throw new ManagerNotFound("No Manager Found");
 	}
 }

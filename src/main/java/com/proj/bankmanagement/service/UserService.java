@@ -14,6 +14,10 @@ import com.proj.bankmanagement.dto.AccountType;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.dto.User;
+import com.proj.bankmanagement.exception.ManagerNotFound;
+import com.proj.bankmanagement.exception.NoAccountTypeFound;
+import com.proj.bankmanagement.exception.PasswordIncorrect;
+import com.proj.bankmanagement.exception.UserNotFound;
 
 @Service
 public class UserService {
@@ -40,7 +44,7 @@ public class UserService {
 			} else if (accountType == 2) {
 				account.setAccountType(AccountType.CURRENT);
 			} else {
-				return null; // bad request only 1 or 2
+				throw new NoAccountTypeFound("1 For Savings Account and 2 For Current");
 			}
 			u.setUserAccount(account);
 			account.setAccountUser(u);
@@ -58,7 +62,7 @@ public class UserService {
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 
 		} else {
-			return null; // no manager found
+			throw new ManagerNotFound("Manager Not Found");
 		}
 
 	}
@@ -72,7 +76,7 @@ public class UserService {
 			rs.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.FOUND);
 		}
-		return null; // no user found
+		throw new UserNotFound("No User Found");
 	}
 
 	public ResponseEntity<ResponseStructure<User>> deleteUserById(int id) {
@@ -91,7 +95,7 @@ public class UserService {
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 
 		}
-		return null; // no user found
+		throw new UserNotFound("No User Found");
 
 	}
 
@@ -104,27 +108,27 @@ public class UserService {
 			rs.setData(userDao.updateUser(id, u));
 			rs.setMsg("User with Id " + id + "updated");
 			rs.setStatus(HttpStatus.CREATED.value());
-			return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.CREATED);
+			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no user found
+		throw new UserNotFound("No User Found");
 	}
-	
-	public ResponseEntity<ResponseStructure<User>> findUserByName(String userName,String userPassword){
+
+	public ResponseEntity<ResponseStructure<User>> findUserByName(String userName, String userPassword) {
 		ResponseStructure<User> rs = new ResponseStructure<>();
-		
+
 		User exUser = userDao.findUserByName(userName);
-		
-		if (exUser!=null) {
+
+		if (exUser != null) {
 			if (exUser.getUserAccount().getAccountPassword().equals(userPassword)) {
 				rs.setData(exUser);
 				rs.setMsg("User Found");
 				rs.setStatus(HttpStatus.FOUND.value());
-				return new ResponseEntity<ResponseStructure<User>>(rs,HttpStatus.FOUND);
-				
+				return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.FOUND);
+
 			}
-			return null; //password not match
+			throw new PasswordIncorrect("Password Mismatch");
 		}
-		return null; //no user found
+		throw new UserNotFound("No User Found");
 	}
 
 }

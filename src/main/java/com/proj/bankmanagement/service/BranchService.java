@@ -13,6 +13,8 @@ import com.proj.bankmanagement.dao.BranchDao;
 import com.proj.bankmanagement.dto.Bank;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
+import com.proj.bankmanagement.exception.BankNotFound;
+import com.proj.bankmanagement.exception.BranchNotFound;
 
 @Service
 public class BranchService {
@@ -36,7 +38,7 @@ public class BranchService {
 
 			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no bank found
+		throw new BankNotFound("No Bank Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Branch>> findBranchById(int id) {
@@ -48,7 +50,7 @@ public class BranchService {
 			rs.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.FOUND);
 		}
-		return null; // No Branch Found with id
+		throw new BranchNotFound("No Branch Found");
 
 	}
 
@@ -77,7 +79,7 @@ public class BranchService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 		}
-		return null; // No Branch Found
+		throw new BranchNotFound("No Branch Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Branch>> updateBranch(int id, Branch b) {
@@ -89,7 +91,7 @@ public class BranchService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 		}
-		return null; // No Branch Found
+		throw new BranchNotFound("No Branch Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Branch>> addBankToBranch(int branchId, int bankId) {
@@ -105,9 +107,9 @@ public class BranchService {
 				rs.setStatus(HttpStatus.CREATED.value());
 				return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 			}
-			return null; // no branch found
+			throw new BranchNotFound("No Branch Found");
 		}
-		return null; // no bank found
+		throw new BankNotFound("No Bank Found");
 	}
 
 }

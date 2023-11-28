@@ -10,6 +10,9 @@ import com.proj.bankmanagement.dao.AccountDao;
 import com.proj.bankmanagement.dto.Account;
 import com.proj.bankmanagement.dto.AccountType;
 import com.proj.bankmanagement.dto.User;
+import com.proj.bankmanagement.exception.AccountNotFound;
+import com.proj.bankmanagement.exception.CannotChangeToSameAccountType;
+import com.proj.bankmanagement.exception.NoAccountTypeFound;
 
 @Service
 public class AccountService {
@@ -31,7 +34,7 @@ public class AccountService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no account found
+		throw new AccountNotFound("No Account Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Account>> changeAccountType(int accountId, int accountType) {
@@ -53,12 +56,12 @@ public class AccountService {
 				return new ResponseEntity<ResponseStructure<Account>>(rs, HttpStatus.CREATED);
 			} else if (accountType == 1 && exAccount.getAccountType() == AccountType.SAVING
 					|| accountType == 2 && exAccount.getAccountType() == AccountType.CURRENT) {
-				return null; // cannot change account to same type
+				throw new CannotChangeToSameAccountType("Not Possible to Convert to Same Type");
 			} else {
-				return null; // limit exceeds 3
+				throw new NoAccountTypeFound("No Account Type Found");
 			}
 		}
-		return null; // no account found
+		throw new AccountNotFound("No Account Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Account>> findAccountWithAccountNumber(long accountNumber) {
@@ -71,6 +74,6 @@ public class AccountService {
 			rs.setStatus(HttpStatus.FOUND.value());
 			return new ResponseEntity<ResponseStructure<Account>>(rs, HttpStatus.FOUND);
 		}
-		return null; //no account number
+		throw new AccountNotFound("No Account Found");
 	}
 }

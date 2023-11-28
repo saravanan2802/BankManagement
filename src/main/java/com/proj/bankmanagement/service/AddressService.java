@@ -14,6 +14,7 @@ import com.proj.bankmanagement.dto.Address;
 import com.proj.bankmanagement.dto.Branch;
 import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.dto.User;
+import com.proj.bankmanagement.exception.UserNotFound;
 
 @Service
 public class AddressService {
@@ -39,7 +40,7 @@ public class AddressService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<User>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no user found
+		throw new UserNotFound("No User Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Branch>> createAddressForBranch(Address a, int branchId) {
@@ -54,7 +55,7 @@ public class AddressService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Branch>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no Branch found
+		throw new UserNotFound("No Branch Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Manager>> createAddressForManager(Address a, int managerId) {
@@ -69,7 +70,7 @@ public class AddressService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Manager>>(rs, HttpStatus.CREATED);
 		}
-		return null; // no Manager found
+		throw new UserNotFound("No Manager Found");
 	}
 
 	public ResponseEntity<ResponseStructure<Address>> updateAddress(Address a, int addressId) {
@@ -83,7 +84,7 @@ public class AddressService {
 			rs.setStatus(HttpStatus.CREATED.value());
 			return new ResponseEntity<ResponseStructure<Address>>(rs,HttpStatus.CREATED);
 		}
-		return null; //no address found
+		throw new UserNotFound("No Address Found");
 	}
 	
 	

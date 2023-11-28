@@ -17,6 +17,12 @@ import com.proj.bankmanagement.dto.Account;
 import com.proj.bankmanagement.dto.Transaction;
 import com.proj.bankmanagement.dto.TransactionStatus;
 import com.proj.bankmanagement.dto.TransactionType;
+import com.proj.bankmanagement.exception.AccountNotFound;
+import com.proj.bankmanagement.exception.CannotSendMoneyToOwnAccount;
+import com.proj.bankmanagement.exception.MinimumBalanceLimitExceeds;
+import com.proj.bankmanagement.exception.PasswordIncorrect;
+import com.proj.bankmanagement.exception.TransactionAmount;
+import com.proj.bankmanagement.exception.UserNotFound;
 
 @Service
 public class TransactionService {
@@ -68,7 +74,7 @@ public class TransactionService {
 									return new ResponseEntity<ResponseStructure<Transaction>>(rs, HttpStatus.CREATED);
 
 								}
-								return null; // minimum balance limit exceeds
+								throw new MinimumBalanceLimitExceeds("Minimum Balance Limit Exceeds");
 							}
 							Transaction t = new Transaction();
 							t.setTransactionAmount(amount);
@@ -83,15 +89,15 @@ public class TransactionService {
 							rs.setStatus(HttpStatus.ALREADY_REPORTED.value());
 							return new ResponseEntity<ResponseStructure<Transaction>>(rs, HttpStatus.ALREADY_REPORTED);
 						}
-						return null; // password mismatch
+						throw new PasswordIncorrect("Password Mismatch");
 					}
-					return null; // no to Account
+					throw new AccountNotFound("No Account Found");
 				}
-				return null; // no from Account Found
+				throw new AccountNotFound("No Account Found");
 			}
-			return null; // transaction amount should be greater than zero
+			throw new TransactionAmount("Minimum Transaction Amount Should be Rs.1");
 		}
-		return null; // cannot send money to same account
+		throw new CannotSendMoneyToOwnAccount("Cannot Send Money To Own Account");
 
 	}
 
@@ -103,7 +109,7 @@ public class TransactionService {
 		if (transactions != null) {
 			for (Transaction trans : transactions) {
 				if (trans.getTransStatus().equals(TransactionStatus.PENDING)) {
-					if (currentDate.equals(trans.getTransactionDateAndtime().plusDays(1))) {
+					if (currentDate.isAfter(trans.getTransactionDateAndtime())) {
 						trans.setTransStatus(TransactionStatus.FAILED);
 						trans.setTransType(TransactionType.NOTDEBITED);
 						transactionDao.updateTransaction(trans.getTransactionId(), trans);
@@ -117,7 +123,7 @@ public class TransactionService {
 			rs.setStatus(HttpStatus.ACCEPTED.value());
 			return new ResponseEntity<ResponseStructure<List<Transaction>>>(rs, HttpStatus.ACCEPTED);
 		}
-		return null; // no pending transaction
+		throw new AccountNotFound("No Account with pending Transaction");
 	}
 
 	public ResponseEntity<ResponseStructure<List<Transaction>>> getFilteredTransactions(String userName,
@@ -141,11 +147,11 @@ public class TransactionService {
 				rs.setData(filteredList);
 				rs.setMsg("Transactions Found within Given Months");
 				rs.setStatus(HttpStatus.FOUND.value());
-				return new ResponseEntity<ResponseStructure<List<Transaction>>>(rs,HttpStatus.FOUND);
+				return new ResponseEntity<ResponseStructure<List<Transaction>>>(rs, HttpStatus.FOUND);
 			}
-			return null; // password mismatch
+			throw new PasswordIncorrect("password Mismatch");
 		}
-		return null; // no user found
+		throw new UserNotFound("No User Found");
 
 	}
 
