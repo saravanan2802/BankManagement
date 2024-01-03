@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 @Entity
@@ -21,6 +23,8 @@ public class Branch {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int branchId;
+	@NotNull
+	@NotBlank
 	private String branchIfsc;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address branchAddress;

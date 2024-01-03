@@ -12,6 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 @Entity
@@ -19,7 +23,11 @@ public class Bank {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int bankId;
+	@NotNull
+	@NotBlank
 	private String bankName;
+	@Min(value = 6000000000l, message = "Invalid Contact Number")
+	@Max(value = 9999999999l, message = "Invalid Contact Number")
 	private long bankContact;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonIgnore

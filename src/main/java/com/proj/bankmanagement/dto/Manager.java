@@ -8,13 +8,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 @Component
 @Entity
 public class Manager {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int managerId;
+	@NotNull
+	@NotBlank
 	private String managerName;
+	@NotNull
+	@NotBlank
 	private String managerPassword;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address managerAddress;

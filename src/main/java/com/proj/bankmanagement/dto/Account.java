@@ -13,6 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Component
 @Entity
@@ -21,6 +25,9 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int accountId;
 	private long accountNumber;
+	 @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
+             message = "Password must have min one number one small case one upper case and one special charcter")
+	 @Size(min = 6, message = "size must be atleast 6 character")
 	private String accountPassword;
 	private double accountBalance;
 	private AccountType accountType;

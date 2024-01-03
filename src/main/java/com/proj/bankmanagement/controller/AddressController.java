@@ -16,6 +16,8 @@ import com.proj.bankmanagement.dto.Manager;
 import com.proj.bankmanagement.dto.User;
 import com.proj.bankmanagement.service.AddressService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/address")
 public class AddressController {
@@ -23,7 +25,7 @@ public class AddressController {
 	AddressService addressService;
 
 	@PostMapping("/user")
-	public ResponseEntity<ResponseStructure<User>> createAddressForUser(@RequestBody Address a,
+	public ResponseEntity<ResponseStructure<User>> createAddressForUser(@Valid @RequestBody Address a,
 			@RequestParam int userId) {
 		return addressService.createAddressForUser(a, userId);
 	}
